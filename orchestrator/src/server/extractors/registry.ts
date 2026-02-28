@@ -109,6 +109,10 @@ function resolveCatalogMismatches(
 
 async function createRegistry(): Promise<ExtractorRegistry> {
   const manifestPaths = await discoverManifestPaths();
+  logger.info("Discovered extractor manifest paths", {
+    manifestPathCount: manifestPaths.length,
+    manifestPaths,
+  });
   const manifests = new Map<string, ExtractorManifest>();
   const manifestBySource = new Map<ExtractorSourceId, ExtractorManifest>();
 

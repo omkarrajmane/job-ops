@@ -195,6 +195,10 @@ export const getEnabledSources = (
       enabled.push(source);
       continue;
     }
+    if (source === "wtj") {
+      enabled.push(source);
+      continue;
+    }
     if (
       source === "indeed" ||
       source === "linkedin" ||

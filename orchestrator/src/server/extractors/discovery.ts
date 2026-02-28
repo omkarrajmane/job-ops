@@ -32,12 +32,12 @@ async function directoryExists(path: string): Promise<boolean> {
 }
 
 async function resolveExtractorsRoot(): Promise<string> {
-  if (await directoryExists(DEFAULT_EXTRACTORS_ROOT)) {
-    return DEFAULT_EXTRACTORS_ROOT;
-  }
-
   if (await directoryExists(MODULE_RELATIVE_EXTRACTORS_ROOT)) {
     return MODULE_RELATIVE_EXTRACTORS_ROOT;
+  }
+
+  if (await directoryExists(DEFAULT_EXTRACTORS_ROOT)) {
+    return DEFAULT_EXTRACTORS_ROOT;
   }
 
   return DEFAULT_EXTRACTORS_ROOT;
