@@ -91,6 +91,21 @@ export function buildReadyPanelGoogleDorks(
 
   const links: ReadyPanelGoogleDorkLink[] = [];
 
+  // Direct LinkedIn people search — filtered to 1st/2nd degree connections
+  // so you can find referrals at the company.
+  if (employer) {
+    const referralParams = new URLSearchParams({
+      keywords: employer,
+      network: '["F","S"]',
+      origin: "FACETED_SEARCH",
+    });
+    links.push({
+      query: employer,
+      href: `https://www.linkedin.com/search/results/people/?${referralParams.toString()}`,
+      label: `Your connections at ${employer}`,
+    });
+  }
+
   const linkedinQuery =
     linkedinTerms.length > 0
       ? `site:linkedin.com/in ${quoteTerms(linkedinTerms)}`
