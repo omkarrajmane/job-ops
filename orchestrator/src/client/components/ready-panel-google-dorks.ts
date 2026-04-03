@@ -49,6 +49,32 @@ function getKeywordTerms(job: Job): string[] {
   return terms;
 }
 
+function toSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+const ENGINEERING_KEYWORDS = [
+  "engineer",
+  "developer",
+  "sde",
+  "mts",
+  "programmer",
+  "swe",
+];
+
+function normalizeSalaryTitle(title: string): string | null {
+  const lower = title.toLowerCase();
+  if (ENGINEERING_KEYWORDS.some((kw) => lower.includes(kw))) {
+    return "Software Engineer";
+  }
+  return null;
+}
+
 function quoteTerms(terms: string[]): string {
   return terms.map((term) => `"${term}"`).join(" ");
 }
@@ -131,6 +157,50 @@ export function buildReadyPanelGoogleDorks(
   const webLink = buildDork("Web results", webTerms);
   if (webLink) {
     links.push(webLink);
+  }
+
+  // --- Salary comparison links ---
+  if (employer) {
+    const companySlug = toSlug(employer);
+    const salaryTitle = title ? normalizeSalaryTitle(title) : null;
+
+    if (salaryTitle) {
+      const salarySlug = toSlug(salaryTitle);
+
+      links.push({
+        query: `levels.fyi ${employer} ${salaryTitle}`,
+        href: `https://www.levels.fyi/companies/${companySlug}/salaries/${salarySlug}`,
+        label: `${salaryTitle} salary at ${employer} on Levels.fyi`,
+      });
+
+      links.push({
+        query: `ambitionbox ${employer} ${salaryTitle}`,
+        href: `https://www.ambitionbox.com/salaries/${companySlug}-salaries/${salarySlug}`,
+        label: `${salaryTitle} salary at ${employer} on AmbitionBox`,
+      });
+    } else {
+      links.push({
+        query: `levels.fyi ${employer}`,
+        href: `https://www.levels.fyi/companies/${companySlug}/salaries`,
+        label: `Salaries at ${employer} on Levels.fyi`,
+      });
+
+      links.push({
+        query: `ambitionbox ${employer}`,
+        href: `https://www.ambitionbox.com/salaries/${companySlug}-salaries`,
+        label: `Salaries at ${employer} on AmbitionBox`,
+      });
+    }
+
+    const glassdoorLabel = title || "salaries";
+    const glassdoorQuery = title
+      ? `site:glassdoor.com/Salary "${employer}" "${title}" salary`
+      : `site:glassdoor.com/Salary "${employer}" salaries`;
+    links.push({
+      query: glassdoorQuery,
+      href: `https://www.google.com/search?q=${encodeURIComponent(glassdoorQuery)}`,
+      label: `${glassdoorLabel} salary at ${employer} on Glassdoor`,
+    });
   }
 
   return links;

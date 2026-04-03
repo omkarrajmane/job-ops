@@ -169,7 +169,7 @@ describe("ReadyPanel", () => {
 
     fireEvent.click(
       screen.getByRole("button", {
-        name: /3 search links/i,
+        name: /7 search links/i,
       }),
     );
 
